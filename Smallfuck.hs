@@ -25,7 +25,19 @@ execute (c:cs) tape pointer
             '<' -> execute cs tape (pointer - 1)
             '*' -> let (left, (bit:right)) = splitAt pointer tape
                    in execute cs (left ++ (1 - bit):right) pointer
+            '[' -> if tape !! pointer == 0 then
+                      execute (skipToClosingBracket cs) tape pointer
+                   else execute cs tape pointer
+            ']' -> if tape !! pointer /= 0 then
+                      execute (rewindToOpeningBracket (c:cs)) tape pointer
+                   else execute cs tape pointer
             _   -> execute cs tape pointer
+
+skipToClosingBracket :: Commands -> Commands
+skipToClosingBracket = undefined -- Implement skipping logic
+
+rewindToOpeningBracket :: Commands -> Commands
+rewindToOpeningBracket = undefined -- Implement rewind logic
 
 main :: IO()
 main = undefined
