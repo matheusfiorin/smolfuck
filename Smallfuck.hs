@@ -12,6 +12,7 @@ parseTape = map (\c -> read [c] :: Int)
 interpreter :: Commands -> String -> String
 interpreter commands tape = let
     initialTape = parseTape tape
+    finalTape = execute commands initialTape 0
   in map intToDigit initialTape
 
 execute :: Commands -> Tape -> Pointer -> Tape
@@ -24,12 +25,6 @@ execute (c:cs) tape pointer
             '<' -> execute cs tape (pointer - 1)
             '*' -> let (left, (bit:right)) = splitAt pointer tape
                    in execute cs (left ++ (1 - bit):right) pointer
-            '[' -> if tape !! pointer == 0 then
-                      execute (skipToClosingBracket cs) tape pointer
-                   else execute cs tape pointer
-            ']' -> if tape !! pointer /= 0 then
-                      execute (rewindToOpeningBracket (c:cs)) tape pointer
-                   else execute cs tape pointer
             _   -> execute cs tape pointer
 
 main :: IO()
